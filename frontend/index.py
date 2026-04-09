@@ -33,7 +33,7 @@ st.caption("Secure • Reliable • AI-powered knowledge assistant")
 # Global State (IMPORTANT)
 # -----------------------------
 if "model" not in st.session_state:
-    st.session_state.model = "gpt-4.1-mini"
+    st.session_state.model = "llama3.2:3b"
 
 if "temperature" not in st.session_state:
     st.session_state.temperature = 0.2
@@ -51,7 +51,7 @@ with st.sidebar:
     selected = option_menu(
         menu_title=None,
         options=["Chat", "Knowledge Base", "Settings"],
-        icons=["chat", "database", "gear"],  # Bootstrap icons
+        icons=["chat", "database", "gear"],
         default_index=0,
     )
 
@@ -60,17 +60,28 @@ with st.sidebar:
     if selected == "Settings":
         st.subheader("Model Settings")
 
+        available_models = ["llama3.2:3b", "llama3.2:7b", "llama3.2:1b"]
+
         new_model = st.selectbox(
             "Model",
-            ["gpt-4.1-mini", "gpt-4.1", "mock-model"],
-            index=["gpt-4.1-mini", "gpt-4.1", "mock-model"].index(
-                st.session_state.model
+            available_models,
+            index=(
+                available_models.index(st.session_state.model)
+                if st.session_state.model in available_models
+                else 0
             ),
         )
 
         new_temperature = st.slider(
             "Temperature", 0.0, 1.0, st.session_state.temperature
         )
+
+        if new_model == "llama3.2:3b":
+            st.info("🦙 **Llama 3.2 3B** - Good balance of speed and quality")
+        elif new_model == "llama3.2:7b":
+            st.info("🦙 **Llama 3.2 7B** - Higher quality, needs more RAM")
+        elif new_model == "llama3.2:1b":
+            st.info("🦙 **Llama 3.2 1B** - Very fast, lower quality")
 
         st.session_state.model = new_model
         st.session_state.temperature = new_temperature
